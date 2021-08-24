@@ -11,6 +11,7 @@ import (
 	"time"
 
 	_ "github.com/lib/pq"
+	"github.com/nchukkaio/moviesDB/models"
 )
 
 const version = "1.0.0"
@@ -31,6 +32,7 @@ type AppStatus struct {
 type application struct {
 	config config
 	logger *log.Logger
+	models models.Models
 }
 
 func main() {
@@ -48,6 +50,7 @@ func main() {
 	app := &application{
 		logger: logger,
 		config: cfg,
+		models: models.NewModels(db),
 	}
 	server := &http.Server{
 		Addr:         fmt.Sprintf(":%d", cfg.port),

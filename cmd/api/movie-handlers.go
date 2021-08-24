@@ -4,10 +4,8 @@ import (
 	"errors"
 	"net/http"
 	"strconv"
-	"time"
 
 	"github.com/julienschmidt/httprouter"
-	"github.com/nchukkaio/moviesDB/models"
 )
 
 func (app *application) getOneMovie(rw http.ResponseWriter, r *http.Request) {
@@ -22,17 +20,11 @@ func (app *application) getOneMovie(rw http.ResponseWriter, r *http.Request) {
 
 	app.logger.Println("id is ", id)
 
-	movie := models.Movie{
-		ID:          id,
-		Title:       "Some Movie",
-		Description: "Some Description",
-		Year:        2021,
-		ReleaseDate: time.Date(2021, 01, 01, 01, 0, 0, 0, time.Local),
-		Runtime:     100,
-		Rating:      5,
-		MPAARating:  "PG-13",
-		CreatedAt:   time.Date(2021, 01, 01, 01, 0, 0, 0, time.Local),
-		UpdatedAt:   time.Date(2021, 01, 01, 01, 0, 0, 0, time.Local),
+	movie, err := app.models.DB.Get(id)
+	if err != nil {
+		app.logger.Println(errors.New("invalid id"))
+		app.errorJSON(rw, err)
+		return
 	}
 	app.writeJSON(rw, http.StatusOK, movie, "movie")
 }
